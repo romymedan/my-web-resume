@@ -475,39 +475,37 @@
     }
     .project-link svg { width: 13px; height: 13px; }
 
-    /* ——— SKILLS ——— */
+    /* ——— SKILLS (tag cloud) ——— */
     #skills-bg { background: var(--cream); }
 
-    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; }
-
-    .skill-group {
-      background: var(--cream-dark); border-radius: 1rem; padding: 1.6rem 1.5rem;
-      border: 1px solid var(--rose-light);
-      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s;
-    }
-    .skill-group:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(122,94,78,0.08);
+    .skills-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: center;
+      max-width: 800px;
+      margin: 0 auto;
     }
 
-    .skill-group-header { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem; }
-    .skill-group-icon { font-size: 1.3rem; }
-    .skill-group-title {
-      font-family: var(--font-display); font-size: 1.15rem;
-      font-weight: 400; color: var(--text-dark);
+    .skill-pill {
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 0.45rem 1.1rem;
+      border-radius: 50px;
+      border: 1.5px solid;
+      transition: transform 0.25s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.25s;
+      cursor: default;
     }
-
-    .skill-list { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; }
-    .skill-list li {
-      font-size: 0.87rem; color: var(--text-mid);
-      display: flex; align-items: center; gap: 0.55rem;
+    .skill-pill:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
     }
-    .skill-list li::before {
-      content: ''; width: 7px; height: 7px;
-      background: var(--rose); border-radius: 50%; flex-shrink: 0;
-      transition: transform 0.2s;
-    }
-    .skill-list li:hover::before { transform: scale(1.4); }
+    .skill-pill.rose   { background: var(--rose-light); color: var(--rose-deep); border-color: rgba(200,133,122,0.35); }
+    .skill-pill.plum   { background: var(--plum-light); color: var(--plum); border-color: rgba(123,94,167,0.3); }
+    .skill-pill.sage   { background: var(--sage-light); color: var(--sage-dark); border-color: rgba(122,158,138,0.35); }
+    .skill-pill.amber  { background: var(--amber-light); color: var(--amber); border-color: rgba(212,146,58,0.3); }
+    .skill-pill.neutral { background: var(--cream-dark); color: var(--text-mid); border-color: var(--rose-light); }
 
     /* ——— INTERESTS ——— */
     #interests-bg { background: var(--cream-dark); }
@@ -892,67 +890,37 @@
   <!-- SKILLS -->
   <div id="skills-bg">
     <div class="section-wrap">
-      <p class="section-label reveal">What I Know</p>
+      <p class="section-label reveal">What I Work With</p>
       <h2 class="section-title reveal">Skills</h2>
       <div class="section-bar reveal"></div>
 
-      <div class="skills-grid">
-        <div class="skill-group reveal">
-          <div class="skill-group-header">
-            <span class="skill-group-icon">&#x1F9EA;</span>
-            <h4 class="skill-group-title">QA &amp; Testing</h4>
-          </div>
-          <ul class="skill-list">
-            <li>Playwright &amp; Selenium / Appium</li>
-            <li>Cucumber (BDD) / Behat</li>
-            <li>JUnit / TestNG / Rest Assured</li>
-            <li>REST API Testing (Postman, Swagger)</li>
-            <li>Test Strategy &amp; Planning</li>
-            <li>Manual &amp; Exploratory Testing</li>
-          </ul>
-        </div>
-        <div class="skill-group reveal reveal-delay-1">
-          <div class="skill-group-header">
-            <span class="skill-group-icon">&#x1F916;</span>
-            <h4 class="skill-group-title">AI &amp; Automation</h4>
-          </div>
-          <ul class="skill-list">
-            <li>Agentic Quality Systems</li>
-            <li>Autonomous Test Generation</li>
-            <li>Cekura (AI Evaluation Testing)</li>
-            <li>LLM Prompt Testing</li>
-            <li>GitHub Copilot</li>
-            <li>MCPs / Cursor / Claude Code</li>
-          </ul>
-        </div>
-        <div class="skill-group reveal reveal-delay-2">
-          <div class="skill-group-header">
-            <span class="skill-group-icon">&#x1F4BB;</span>
-            <h4 class="skill-group-title">Languages &amp; Tools</h4>
-          </div>
-          <ul class="skill-list">
-            <li>TypeScript / JavaScript</li>
-            <li>Java / Python / PHP</li>
-            <li>Git / Bitbucket</li>
-            <li>SQL (PostgreSQL, Oracle, DB2)</li>
-            <li>Docker / Linux</li>
-            <li>ETL / SSIS</li>
-          </ul>
-        </div>
-        <div class="skill-group reveal reveal-delay-3">
-          <div class="skill-group-header">
-            <span class="skill-group-icon">&#x2601;&#xFE0F;</span>
-            <h4 class="skill-group-title">Cloud &amp; DevOps</h4>
-          </div>
-          <ul class="skill-list">
-            <li>GCP / AWS (Device Farm)</li>
-            <li>Jenkins CI/CD Pipelines</li>
-            <li>BrowserStack</li>
-            <li>QA Leadership &amp; Mentoring</li>
-            <li>Agile / Scrum Workflows</li>
-            <li>Healthcare IT &amp; EHR Systems</li>
-          </ul>
-        </div>
+      <div class="skills-cloud reveal">
+        <!-- QA & Testing — rose -->
+        <span class="skill-pill rose">Playwright</span>
+        <span class="skill-pill rose">Selenium</span>
+        <span class="skill-pill rose">Cucumber BDD</span>
+        <span class="skill-pill rose">API Testing</span>
+        <span class="skill-pill rose">Test Strategy</span>
+        <!-- AI — plum -->
+        <span class="skill-pill plum">Agentic Quality Systems</span>
+        <span class="skill-pill plum">Autonomous Test Generation</span>
+        <span class="skill-pill plum">LLM Testing</span>
+        <span class="skill-pill plum">Claude Code</span>
+        <span class="skill-pill plum">GitHub Copilot</span>
+        <!-- Languages — sage -->
+        <span class="skill-pill sage">TypeScript</span>
+        <span class="skill-pill sage">Java</span>
+        <span class="skill-pill sage">Python</span>
+        <span class="skill-pill sage">SQL</span>
+        <!-- Cloud & DevOps — amber -->
+        <span class="skill-pill amber">AWS</span>
+        <span class="skill-pill amber">GCP</span>
+        <span class="skill-pill amber">Jenkins CI/CD</span>
+        <span class="skill-pill amber">Docker</span>
+        <!-- Domain — neutral -->
+        <span class="skill-pill neutral">Healthcare IT</span>
+        <span class="skill-pill neutral">QA Leadership</span>
+        <span class="skill-pill neutral">Agile / Scrum</span>
       </div>
     </div>
   </div>
