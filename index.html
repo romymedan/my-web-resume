@@ -147,7 +147,13 @@
       align-items: center;
       padding: 7rem 5% 4rem;
       position: relative;
+    }
+    /* Separate overflow wrapper for blobs only */
+    .hero-bg-wrap {
+      position: absolute;
+      inset: 0;
       overflow: hidden;
+      pointer-events: none;
     }
 
     /* Animated blobs */
@@ -207,7 +213,8 @@
     }
 
     .hero-content {
-      max-width: 740px;
+      max-width: 680px;
+      width: 100%;
       position: relative;
       z-index: 2;
     }
@@ -654,10 +661,12 @@
 
   <!-- HERO -->
   <section id="hero">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
-    <div class="dots-canvas" id="dotsCanvas"></div>
+    <div class="hero-bg-wrap">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
+      <div class="dots-canvas" id="dotsCanvas"></div>
+    </div>
 
     <div class="hero-content">
       <p class="hero-eyebrow">
