@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Romy Medan — QA Lead & AI Innovator</title>
+  <meta name="description" content="Romy Medan — QA Lead & AI Innovator based in the Atlanta Metro Area. Leading quality assurance for AscOne at Ascension with AI-augmented testing." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FAF7F2;
+      --cream-dark: #F0EBE1;
+      --rose: #C8857A;
+      --rose-light: #F0D5D0;
+      --rose-deep: #A85F55;
+      --sage: #7A9E8A;
+      --sage-light: #C8DDD0;
+      --sage-dark: #4E7260;
+      --plum: #7B5EA7;
+      --plum-light: #E4DAF5;
+      --amber: #D4923A;
+      --amber-light: #F5E0C0;
+      --warm-brown: #7A5C4E;
+      --text-dark: #3A2E28;
+      --text-mid: #6B5248;
+      --text-light: #9E8278;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Nunito', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--text-dark);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ——— SCROLL REVEAL ——— */
+    .reveal {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 0.7s cubic-bezier(0.23, 1, 0.32, 1), transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.12s; }
+    .reveal-delay-2 { transition-delay: 0.24s; }
+    .reveal-delay-3 { transition-delay: 0.36s; }
+    .reveal-delay-4 { transition-delay: 0.48s; }
+
+    /* ——— NAV ——— */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 3rem;
+      background: rgba(250, 247, 242, 0.88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(200,133,122,0.12);
+      transition: box-shadow 0.4s, background 0.4s;
+    }
+    nav.scrolled {
+      box-shadow: 0 4px 32px rgba(122,94,78,0.10);
+      background: rgba(250, 247, 242, 0.95);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 400;
+      color: var(--text-dark);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+    .nav-logo span { color: var(--rose); font-style: italic; }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      text-decoration: none;
+      transition: color 0.25s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0; right: 0;
+      height: 1.5px;
+      background: var(--rose);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .nav-links a:hover { color: var(--rose-deep); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    /* Mobile menu button */
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 32px;
+      height: 24px;
+      position: relative;
+      z-index: 110;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: var(--text-dark);
+      border-radius: 2px;
+      position: absolute;
+      left: 0;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .nav-toggle span:nth-child(1) { top: 2px; }
+    .nav-toggle span:nth-child(2) { top: 11px; }
+    .nav-toggle span:nth-child(3) { top: 20px; }
+    .nav-toggle.active span:nth-child(1) { top: 11px; transform: rotate(45deg); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; transform: translateX(-8px); }
+    .nav-toggle.active span:nth-child(3) { top: 11px; transform: rotate(-45deg); }
+
+    /* ——— HERO ——— */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 7rem 5% 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated blobs */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      will-change: transform;
+    }
+    .blob-1 {
+      top: -140px; right: -80px;
+      width: 560px; height: 560px;
+      background: radial-gradient(ellipse at 40% 40%, #F0D5D0 0%, #E8C5BE 40%, transparent 72%);
+      border-radius: 64% 36% 50% 50% / 42% 58% 42% 58%;
+      animation: blobA 9s ease-in-out infinite;
+    }
+    .blob-2 {
+      bottom: -80px; left: -80px;
+      width: 480px; height: 480px;
+      background: radial-gradient(ellipse at 60% 60%, #C8DDD0 0%, #A8C8B8 40%, transparent 72%);
+      border-radius: 38% 62% 44% 56% / 60% 40% 60% 40%;
+      animation: blobA 11s ease-in-out infinite reverse;
+    }
+    .blob-3 {
+      top: 30%; right: 8%;
+      width: 280px; height: 280px;
+      background: radial-gradient(ellipse, #E4DAF5 0%, transparent 70%);
+      border-radius: 55% 45% 60% 40% / 50% 50% 50% 50%;
+      animation: blobA 7s ease-in-out infinite 2s;
+      opacity: 0.6;
+    }
+
+    @keyframes blobA {
+      0%,100% { transform: translate(0,0) rotate(0deg) scale(1); }
+      33%      { transform: translate(18px,-22px) rotate(5deg) scale(1.04); }
+      66%      { transform: translate(-12px,14px) rotate(-4deg) scale(0.97); }
+    }
+
+    /* Floating dots */
+    .dots-canvas {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .dot {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.18;
+      animation: floatDot linear infinite;
+    }
+
+    @keyframes floatDot {
+      0%   { transform: translateY(0) scale(1); opacity: 0.15; }
+      50%  { opacity: 0.35; }
+      100% { transform: translateY(-120px) scale(0.5); opacity: 0; }
+    }
+
+    .hero-content {
+      max-width: 740px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--rose-deep);
+      margin-bottom: 1.2rem;
+      animation: fadeUp 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.1s both;
+    }
+    .hero-eyebrow .pin { font-size: 1rem; }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(3.4rem, 9vw, 6.5rem);
+      font-weight: 300;
+      line-height: 1.03;
+      color: var(--text-dark);
+      margin-bottom: 0.5rem;
+      animation: fadeUp 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.2s both;
+    }
+    .hero-name em { font-style: italic; color: var(--rose); }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.1rem, 2.5vw, 1.55rem);
+      font-weight: 300;
+      color: var(--text-mid);
+      margin-bottom: 2rem;
+      letter-spacing: 0.03em;
+      animation: fadeUp 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.3s both;
+    }
+
+    .hero-bio {
+      font-size: 1rem;
+      color: var(--text-mid);
+      max-width: 520px;
+      line-height: 1.85;
+      margin-bottom: 2.5rem;
+      animation: fadeUp 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.4s both;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      animation: fadeUp 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.5s both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ——— BUTTONS ——— */
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.8rem; border-radius: 50px;
+      font-family: var(--font-body); font-size: 0.85rem;
+      font-weight: 700; letter-spacing: 0.07em;
+      text-decoration: none; transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      cursor: pointer; border: none;
+    }
+    .btn-primary { background: var(--rose); color: #fff; }
+    .btn-primary:hover {
+      background: var(--rose-deep);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(168,95,85,0.35);
+    }
+    .btn-outline { background: transparent; color: var(--sage-dark); border: 2px solid var(--sage); }
+    .btn-outline:hover {
+      background: var(--sage); color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(122,158,138,0.3);
+    }
+
+    /* ——— SECTION SHELL ——— */
+    .section-wrap { padding: 6rem 5%; max-width: 1140px; margin: 0 auto; }
+
+    .section-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--rose); margin-bottom: 0.4rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.9rem);
+      font-weight: 300; line-height: 1.15; color: var(--text-dark); margin-bottom: 0.5rem;
+    }
+    .section-bar {
+      width: 56px; height: 3px; border-radius: 2px;
+      background: linear-gradient(90deg, var(--rose), var(--plum), var(--sage));
+      margin: 0.9rem 0 3rem;
+    }
+
+    /* ——— EXPERIENCE ——— */
+    #experience-bg { background: var(--cream); }
+
+    .exp-card {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 2rem;
+      padding: 2.8rem 0;
+      border-top: 1px solid var(--rose-light);
+    }
+    .exp-card:last-child { border-bottom: 1px solid var(--rose-light); }
+
+    .exp-left { display: flex; flex-direction: column; gap: 0.8rem; padding-top: 0.2rem; }
+
+    .company-logo-wrap {
+      width: 52px; height: 52px; border-radius: 12px;
+      border: 1px solid var(--cream-dark);
+      overflow: hidden; background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 12px rgba(122,94,78,0.08);
+    }
+    .company-logo-wrap .logo-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    .exp-dates { font-size: 0.79rem; font-weight: 600; color: var(--text-light); letter-spacing: 0.06em; }
+
+    .exp-company {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--sage-dark); margin-bottom: 0.2rem;
+    }
+    .exp-role {
+      font-family: var(--font-display); font-size: 1.55rem;
+      font-weight: 400; color: var(--text-dark); margin-bottom: 0.8rem;
+    }
+    .exp-desc { color: var(--text-mid); font-size: 0.92rem; line-height: 1.8; }
+
+    .exp-tags { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 1rem; }
+    .tag {
+      background: var(--cream-dark); color: var(--text-mid);
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+      padding: 0.28rem 0.8rem; border-radius: 50px; border: 1px solid var(--rose-light);
+      transition: transform 0.2s;
+    }
+    .tag:hover { transform: translateY(-1px); }
+    .tag.plum { background: var(--plum-light); color: var(--plum); border-color: #d0c0ee; }
+    .tag.sage { background: var(--sage-light); color: var(--sage-dark); border-color: #a8c8b8; }
+    .tag.amber { background: var(--amber-light); color: var(--amber); border-color: #e8c898; }
+
+    /* ——— PROJECTS ——— */
+    #projects-bg { background: var(--cream-dark); }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.8rem;
+    }
+
+    .project-card {
+      background: var(--cream);
+      border-radius: 1.4rem;
+      padding: 2.2rem;
+      border: 1px solid rgba(200,133,122,0.2);
+      transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .project-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--rose), var(--plum), var(--sage));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .project-card:hover::before { transform: scaleX(1); }
+    .project-card:hover {
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: 0 24px 56px rgba(122,94,78,0.14);
+    }
+    .project-card.featured {
+      grid-column: span 2;
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+    .project-card.featured::before { transform: scaleX(1); }
+
+    .featured-icon-col { flex-shrink: 0; }
+    .project-icon-box {
+      width: 80px; height: 80px; border-radius: 18px;
+      overflow: hidden; border: 1px solid var(--plum-light);
+      box-shadow: 0 4px 16px rgba(123,94,167,0.18);
+      background: linear-gradient(135deg, var(--plum-light), var(--sage-light));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem;
+    }
+
+    .project-badge {
+      display: inline-block; font-size: 0.62rem; font-weight: 800;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.22rem 0.7rem; border-radius: 50px; margin-bottom: 0.9rem;
+    }
+    .badge-featured  { background: var(--plum-light);  color: var(--plum); }
+    .badge-hackathon { background: var(--sage-light);  color: var(--sage-dark); }
+
+    .project-name {
+      font-family: var(--font-display); font-size: 1.65rem;
+      font-weight: 400; color: var(--text-dark); margin-bottom: 0.6rem;
+    }
+    .project-card.featured .project-name { font-size: 2.1rem; }
+    .project-desc { color: var(--text-mid); font-size: 0.9rem; line-height: 1.8; margin-bottom: 1.2rem; }
+
+    .project-links { display: flex; gap: 0.9rem; flex-wrap: wrap; }
+    .project-link {
+      font-size: 0.78rem; font-weight: 700; color: var(--plum);
+      text-decoration: none; letter-spacing: 0.05em;
+      display: flex; align-items: center; gap: 0.35rem;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      padding: 0.4rem 0.9rem;
+      border: 1.5px solid var(--plum-light); border-radius: 50px;
+    }
+    .project-link:hover {
+      background: var(--plum); color: #fff; border-color: var(--plum);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(123,94,167,0.25);
+    }
+    .project-link svg { width: 13px; height: 13px; }
+
+    /* ——— SKILLS ——— */
+    #skills-bg { background: var(--cream); }
+
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; }
+
+    .skill-group {
+      background: var(--cream-dark); border-radius: 1rem; padding: 1.6rem 1.5rem;
+      border: 1px solid var(--rose-light);
+      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s;
+    }
+    .skill-group:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(122,94,78,0.08);
+    }
+
+    .skill-group-header { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem; }
+    .skill-group-icon { font-size: 1.3rem; }
+    .skill-group-title {
+      font-family: var(--font-display); font-size: 1.15rem;
+      font-weight: 400; color: var(--text-dark);
+    }
+
+    .skill-list { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; }
+    .skill-list li {
+      font-size: 0.87rem; color: var(--text-mid);
+      display: flex; align-items: center; gap: 0.55rem;
+    }
+    .skill-list li::before {
+      content: ''; width: 7px; height: 7px;
+      background: var(--rose); border-radius: 50%; flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    .skill-list li:hover::before { transform: scale(1.4); }
+
+    /* ——— INTERESTS ——— */
+    #interests-bg { background: var(--cream-dark); }
+
+    .interests-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.4rem; }
+
+    .interest-card {
+      background: var(--cream); border-radius: 1.1rem; padding: 2rem 1.6rem;
+      text-align: center; border: 1px solid rgba(200,133,122,0.2);
+      transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.35s;
+      position: relative; overflow: hidden;
+    }
+    .interest-card::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--sage), var(--rose));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .interest-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(122,158,138,0.15);
+    }
+    .interest-card:hover::after { transform: scaleX(1); }
+
+    .interest-icon {
+      font-size: 2.4rem; margin-bottom: 0.8rem; display: block;
+      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .interest-card:hover .interest-icon { transform: scale(1.15) rotate(-5deg); }
+
+    .interest-name {
+      font-family: var(--font-display); font-size: 1.15rem;
+      font-weight: 400; color: var(--text-dark); margin-bottom: 0.4rem;
+    }
+    .interest-desc { font-size: 0.8rem; color: var(--text-light); line-height: 1.6; }
+
+    /* ——— CONTACT ——— */
+    #contact-bg { background: var(--cream); }
+    .contact-inner { text-align: center; }
+    .contact-sub { color: var(--text-mid); font-size: 1rem; margin-bottom: 2.5rem; }
+    .contact-links { display: flex; justify-content: center; gap: 1.2rem; flex-wrap: wrap; }
+    .contact-link {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.86rem; font-weight: 700; color: var(--text-mid);
+      text-decoration: none; letter-spacing: 0.06em;
+      padding: 0.75rem 1.5rem;
+      border: 1.5px solid var(--rose-light); border-radius: 50px;
+      background: var(--cream);
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .contact-link:hover {
+      background: var(--rose); color: #fff; border-color: var(--rose);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(200,133,122,0.3);
+    }
+    .contact-link:hover svg { stroke: #fff; fill: #fff; }
+
+    /* ——— FOOTER ——— */
+    footer {
+      text-align: center; padding: 2rem 5%;
+      font-size: 0.75rem; color: var(--text-light);
+      border-top: 1px solid var(--rose-light);
+    }
+
+    /* ——— RESPONSIVE ——— */
+    @media (max-width: 750px) {
+      nav { padding: 1rem 1.5rem; }
+
+      .nav-toggle { display: block; }
+
+      .nav-links {
+        position: fixed;
+        top: 0; right: 0;
+        width: min(320px, 85vw);
+        height: 100vh;
+        background: var(--cream);
+        flex-direction: column;
+        padding: 5rem 2rem 2rem;
+        gap: 1.6rem;
+        box-shadow: -8px 0 40px rgba(122,94,78,0.12);
+        transform: translateX(100%);
+        transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      .nav-links.open { transform: translateX(0); }
+      .nav-links a { font-size: 0.9rem; }
+
+      .mobile-overlay {
+        position: fixed; inset: 0; z-index: 99;
+        background: rgba(58,46,40,0.3);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.3s;
+      }
+      .mobile-overlay.visible { opacity: 1; pointer-events: auto; }
+
+      .section-wrap { padding: 4rem 1.5rem; }
+      .exp-card { grid-template-columns: 1fr; gap: 0.8rem; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .project-card.featured { grid-column: span 1; flex-direction: column; gap: 1rem; }
+      #hero { padding: 5.5rem 1.5rem 3rem; }
+    }
+
+    /* Focus styles for accessibility */
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--rose);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a class="nav-logo" href="#hero">Romy <span>Medan</span></a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#experience-bg">Experience</a></li>
+      <li><a href="#projects-bg">Projects</a></li>
+      <li><a href="#skills-bg">Skills</a></li>
+      <li><a href="#interests-bg">Interests</a></li>
+      <li><a href="#contact-bg">Contact</a></li>
+    </ul>
+  </nav>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="dots-canvas" id="dotsCanvas"></div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">
+        <span class="pin">&#x1F4CD;</span> Atlanta Metro Area &nbsp;&middot;&nbsp; QA Lead &nbsp;&middot;&nbsp; AI Innovator
+      </p>
+      <h1 class="hero-name">Romy<br /><em>Medan</em></h1>
+      <p class="hero-title">Quality Assurance &middot; AI-Augmented Testing &middot; Healthcare Tech</p>
+      <p class="hero-bio">
+        I lead quality assurance for AscOne at Ascension, where deep QA expertise meets a growing
+        passion for AI-powered automation. From building agentic testing pipelines to championing
+        accessibility, I believe great software is built by people who genuinely care.
+      </p>
+      <div class="hero-cta-group">
+        <a class="btn btn-primary" href="#contact-bg">Say Hello</a>
+        <a class="btn btn-outline" href="#projects-bg">See My Work</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <div id="experience-bg">
+    <div class="section-wrap">
+      <p class="section-label reveal">Where I've Been</p>
+      <h2 class="section-title reveal">Work Experience</h2>
+      <div class="section-bar reveal"></div>
+
+      <!-- Ascension -->
+      <div class="exp-card reveal">
+        <div class="exp-left">
+          <div class="company-logo-wrap">
+            <span class="logo-icon">&#x1F3E5;</span>
+          </div>
+          <div class="exp-dates">2022 &ndash; Present</div>
+        </div>
+        <div>
+          <p class="exp-company">Ascension &middot; AscOne</p>
+          <h3 class="exp-role">QA Lead</h3>
+          <p class="exp-desc">
+            Leading quality assurance for the AscOne product as part of Team Green &mdash; overseeing
+            end-to-end test strategy across web and mobile. I manage sprint health metrics,
+            automation coverage reporting, and regression cycles using Jira and Zephyr Scale,
+            collaborating with engineering, product, and our scrum master to ship every release
+            with the highest standards that healthcare demands.
+          </p>
+          <div class="exp-tags">
+            <span class="tag plum">Playwright</span>
+            <span class="tag plum">Jira / Zephyr Scale</span>
+            <span class="tag sage">Accessibility Testing</span>
+            <span class="tag">Sprint Metrics</span>
+            <span class="tag sage">Healthcare IT</span>
+            <span class="tag">Test Strategy</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Amazon -->
+      <div class="exp-card reveal reveal-delay-1">
+        <div class="exp-left">
+          <div class="company-logo-wrap">
+            <span class="logo-icon">&#x1F4E6;</span>
+          </div>
+          <div class="exp-dates">Earlier Career</div>
+        </div>
+        <div>
+          <p class="exp-company">Amazon</p>
+          <h3 class="exp-role">QA Engineer</h3>
+          <p class="exp-desc">
+            Built a strong foundation in software quality engineering &mdash; from manual testing and
+            defect lifecycle management to early automation work. Developed a keen eye for edge
+            cases and a systems-level understanding of how great products are tested and shipped at scale.
+          </p>
+          <div class="exp-tags">
+            <span class="tag amber">Manual QA</span>
+            <span class="tag amber">Defect Management</span>
+            <span class="tag">Test Automation</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECTS -->
+  <div id="projects-bg">
+    <div class="section-wrap">
+      <p class="section-label reveal">What I've Built</p>
+      <h2 class="section-title reveal">Projects</h2>
+      <div class="section-bar reveal"></div>
+
+      <div class="projects-grid">
+
+        <!-- FEATURED: Agentic QA -->
+        <div class="project-card featured reveal">
+          <div class="featured-icon-col">
+            <div class="project-icon-box">&#x1F916;</div>
+          </div>
+          <div class="project-body">
+            <span class="project-badge badge-featured">&#x2B50; Featured Project</span>
+            <h3 class="project-name">Agentic QA</h3>
+            <p class="project-desc">
+              A personal project and passion build &mdash; an agentic AI testing pipeline that autonomously
+              navigates web applications, identifies issues, and generates structured QA reports.
+              Built to push the frontier of test automation powered by an AI agent that thinks,
+              adapts, and acts. Live and deployed on Railway.
+            </p>
+            <div class="exp-tags" style="margin-bottom: 1.4rem;">
+              <span class="tag plum">Playwright</span>
+              <span class="tag plum">AI Agents</span>
+              <span class="tag sage">Agentic Testing</span>
+              <span class="tag">Python</span>
+              <span class="tag">Railway</span>
+            </div>
+            <div class="project-links">
+              <a class="project-link" href="https://agenticqa-production-f4fb.up.railway.app" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                Live App
+              </a>
+              <a class="project-link" href="https://github.com/romymedan/agenticQA" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                GitHub
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card reveal reveal-delay-1">
+          <span class="project-badge badge-hackathon">&#x1F91D; AI Hackathon &middot; Solo</span>
+          <h3 class="project-name">QA Pilot</h3>
+          <p class="project-desc">
+            An agentic AI testing pipeline combining Gemini, Chrome DevTools Protocol, and Playwright &mdash;
+            autonomously executing QA tasks end-to-end with AI-driven decision-making.
+          </p>
+          <div class="exp-tags">
+            <span class="tag plum">Gemini</span>
+            <span class="tag">Chrome DevTools Protocol</span>
+            <span class="tag sage">Playwright</span>
+          </div>
+        </div>
+
+        <div class="project-card reveal reveal-delay-2">
+          <span class="project-badge badge-hackathon">&#x1F9EA; AI Hackathon &middot; Team</span>
+          <h3 class="project-name">Qualtrics Triage</h3>
+          <p class="project-desc">
+            Built with the &ldquo;Cure-ious Coders&rdquo; team &mdash; an AI pipeline that processes patient survey
+            feedback into themed Jira tickets with Slack-based human approval flows.
+          </p>
+          <div class="exp-tags">
+            <span class="tag">AI Pipeline</span>
+            <span class="tag">Qualtrics</span>
+            <span class="tag sage">Jira</span>
+            <span class="tag">Slack</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILLS -->
+  <div id="skills-bg">
+    <div class="section-wrap">
+      <p class="section-label reveal">What I Know</p>
+      <h2 class="section-title reveal">Skills</h2>
+      <div class="section-bar reveal"></div>
+
+      <div class="skills-grid">
+        <div class="skill-group reveal">
+          <div class="skill-group-header">
+            <span class="skill-group-icon">&#x1F9EA;</span>
+            <h4 class="skill-group-title">QA &amp; Testing</h4>
+          </div>
+          <ul class="skill-list">
+            <li>Playwright (E2E Automation)</li>
+            <li>Zephyr Scale / Jira</li>
+            <li>Accessibility Testing (WCAG)</li>
+            <li>Regression &amp; Sprint Testing</li>
+            <li>Test Strategy &amp; Planning</li>
+            <li>Manual &amp; Exploratory Testing</li>
+          </ul>
+        </div>
+        <div class="skill-group reveal reveal-delay-1">
+          <div class="skill-group-header">
+            <span class="skill-group-icon">&#x1F916;</span>
+            <h4 class="skill-group-title">AI &amp; Automation</h4>
+          </div>
+          <ul class="skill-list">
+            <li>Agentic AI Pipelines</li>
+            <li>Gemini API</li>
+            <li>Chrome DevTools Protocol</li>
+            <li>Prompt Engineering</li>
+            <li>RAG (Retrieval-Augmented Gen.)</li>
+            <li>Anthropic SDK</li>
+          </ul>
+        </div>
+        <div class="skill-group reveal reveal-delay-2">
+          <div class="skill-group-header">
+            <span class="skill-group-icon">&#x1F4BB;</span>
+            <h4 class="skill-group-title">Languages &amp; Tools</h4>
+          </div>
+          <ul class="skill-list">
+            <li>Python</li>
+            <li>JavaScript / Node.js</li>
+            <li>Git &amp; GitHub</li>
+            <li>Railway (Deployment)</li>
+            <li>Slack Integrations</li>
+            <li>HTML / CSS</li>
+          </ul>
+        </div>
+        <div class="skill-group reveal reveal-delay-3">
+          <div class="skill-group-header">
+            <span class="skill-group-icon">&#x1F3E5;</span>
+            <h4 class="skill-group-title">Domain Knowledge</h4>
+          </div>
+          <ul class="skill-list">
+            <li>Healthcare IT &amp; EHR Systems</li>
+            <li>HIPAA-aware Testing</li>
+            <li>Agile / Scrum Workflows</li>
+            <li>QA Leadership &amp; Mentoring</li>
+            <li>Dashboard &amp; Metrics Reporting</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERESTS -->
+  <div id="interests-bg">
+    <div class="section-wrap">
+      <p class="section-label reveal">Beyond the Screen</p>
+      <h2 class="section-title reveal">A Little About Me</h2>
+      <div class="section-bar reveal"></div>
+
+      <div class="interests-grid">
+        <div class="interest-card reveal">
+          <span class="interest-icon">&#x1F331;</span>
+          <p class="interest-name">Backyard Gardening</p>
+          <p class="interest-desc">Tending raised garden beds and nurturing a little patch of green in the Atlanta area.</p>
+        </div>
+        <div class="interest-card reveal reveal-delay-1">
+          <span class="interest-icon">&#x1F525;</span>
+          <p class="interest-name">Outdoor Entertaining</p>
+          <p class="interest-desc">Bringing people together around a fire pit &mdash; good food, good company, good vibes.</p>
+        </div>
+        <div class="interest-card reveal reveal-delay-2">
+          <span class="interest-icon">&#x1F916;</span>
+          <p class="interest-name">AI Exploration</p>
+          <p class="interest-desc">Staying curious about what's next &mdash; from agents to multi-modal models and beyond.</p>
+        </div>
+        <div class="interest-card reveal reveal-delay-3">
+          <span class="interest-icon">&#x1F43E;</span>
+          <p class="interest-name">Pet-Friendly Living</p>
+          <p class="interest-desc">Designing spaces &mdash; digital and physical &mdash; where every family member feels at home.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div id="contact-bg">
+    <div class="section-wrap">
+      <div class="contact-inner">
+        <p class="section-label reveal">Let's Connect</p>
+        <h2 class="section-title reveal">Get in Touch</h2>
+        <div class="section-bar reveal" style="margin-left: auto; margin-right: auto;"></div>
+        <p class="contact-sub reveal">Whether it's about QA, AI, or a backyard fire &mdash; I'd love to hear from you.</p>
+
+        <div class="contact-links reveal">
+          <a class="contact-link" href="mailto:your@email.com">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Email Me
+          </a>
+          <a class="contact-link" href="https://github.com/romymedan" target="_blank" rel="noopener">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            GitHub
+          </a>
+          <a class="contact-link" href="https://www.linkedin.com/in/romymedan" target="_blank" rel="noopener">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            LinkedIn
+          </a>
+          <a class="contact-link" href="https://agenticqa-production-f4fb.up.railway.app" target="_blank" rel="noopener">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            Agentic QA
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Crafted with care &middot; Romy Medan &middot; Atlanta Metro Area</p>
+  </footer>
+
+  <script>
+    // Nav scroll shadow
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 30);
+    }, { passive: true });
+
+    // Mobile nav toggle
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    const overlay = document.getElementById('mobileOverlay');
+
+    function closeMenu() {
+      navToggle.classList.remove('active');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navLinks.classList.remove('open');
+      overlay.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+
+    navToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.contains('open');
+      if (isOpen) {
+        closeMenu();
+      } else {
+        navToggle.classList.add('active');
+        navToggle.setAttribute('aria-expanded', 'true');
+        navLinks.classList.add('open');
+        overlay.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+
+    overlay.addEventListener('click', closeMenu);
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Floating dots in hero
+    const canvas = document.getElementById('dotsCanvas');
+    const colors = ['#C8857A','#7A9E8A','#7B5EA7','#D4923A','#F0D5D0'];
+    for (let i = 0; i < 22; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot';
+      const size = 4 + Math.random() * 5;
+      d.style.cssText =
+        'width:' + size + 'px;height:' + size + 'px;' +
+        'left:' + (Math.random() * 100) + '%;' +
+        'bottom:' + (Math.random() * 60) + '%;' +
+        'background:' + colors[Math.floor(Math.random() * colors.length)] + ';' +
+        'animation-duration:' + (6 + Math.random() * 8) + 's;' +
+        'animation-delay:' + (Math.random() * 6) + 's;';
+      canvas.appendChild(d);
+    }
+
+    // Scroll reveal with IntersectionObserver
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
