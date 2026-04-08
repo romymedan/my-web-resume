@@ -308,43 +308,80 @@
       margin: 0.9rem 0 3rem;
     }
 
-    /* ——— EXPERIENCE ——— */
+    /* ——— EXPERIENCE (Timeline) ——— */
     #experience-bg { background: var(--cream); }
 
-    .exp-card {
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      gap: 2rem;
-      padding: 2.8rem 0;
-      border-top: 1px solid var(--rose-light);
+    .timeline {
+      position: relative;
+      padding-left: 44px;
     }
-    .exp-card:last-child { border-bottom: 1px solid var(--rose-light); }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 8px; bottom: 8px; left: 15px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--rose), var(--plum), var(--sage));
+      border-radius: 2px;
+    }
 
-    .exp-left { display: flex; flex-direction: column; gap: 0.8rem; padding-top: 0.2rem; }
+    .timeline-item {
+      position: relative;
+      padding-bottom: 3rem;
+    }
+    .timeline-item:last-child { padding-bottom: 0; }
 
-    .company-logo-wrap {
-      width: 52px; height: 52px; border-radius: 12px;
+    .timeline-dot {
+      position: absolute;
+      left: -44px; top: 6px;
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      background: #fff;
       border: 1px solid var(--cream-dark);
-      overflow: hidden; background: #fff;
-      display: flex; align-items: center; justify-content: center;
       box-shadow: 0 2px 12px rgba(122,94,78,0.08);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 2;
+      overflow: hidden;
     }
-    .company-logo-wrap .logo-icon {
-      font-size: 1.5rem;
-      line-height: 1;
-    }
+    .timeline-dot svg { display: block; }
 
-    .exp-dates { font-size: 0.79rem; font-weight: 600; color: var(--text-light); letter-spacing: 0.06em; }
+    .timeline-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.3rem;
+    }
 
     .exp-company {
       font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em;
-      text-transform: uppercase; color: var(--sage-dark); margin-bottom: 0.2rem;
+      text-transform: uppercase; color: var(--sage-dark);
+    }
+    .exp-dates {
+      font-size: 0.75rem; font-weight: 600; color: var(--text-light);
+      letter-spacing: 0.04em; margin-left: auto;
     }
     .exp-role {
-      font-family: var(--font-display); font-size: 1.55rem;
-      font-weight: 400; color: var(--text-dark); margin-bottom: 0.8rem;
+      font-family: var(--font-display); font-size: 1.45rem;
+      font-weight: 400; color: var(--text-dark); margin-bottom: 0.5rem;
     }
-    .exp-desc { color: var(--text-mid); font-size: 0.92rem; line-height: 1.8; }
+    .exp-summary {
+      color: var(--text-mid); font-size: 0.9rem; line-height: 1.75;
+      margin-bottom: 0.7rem;
+    }
+    .exp-highlights {
+      list-style: none; display: flex; flex-direction: column; gap: 0.35rem;
+      margin-bottom: 0.9rem;
+    }
+    .exp-highlights li {
+      font-size: 0.85rem; color: var(--text-mid); line-height: 1.65;
+      display: flex; align-items: baseline; gap: 0.6rem;
+    }
+    .exp-highlights li::before {
+      content: '';
+      width: 5px; height: 5px; min-width: 5px;
+      background: var(--rose); border-radius: 50%;
+      margin-top: 0.45em;
+    }
 
     .exp-tags { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 1rem; }
     .tag {
@@ -569,7 +606,11 @@
       .mobile-overlay.visible { opacity: 1; pointer-events: auto; }
 
       .section-wrap { padding: 4rem 1.5rem; }
-      .exp-card { grid-template-columns: 1fr; gap: 0.8rem; }
+      .timeline { padding-left: 36px; }
+      .timeline-dot { left: -36px; width: 28px; height: 28px; border-radius: 8px; }
+      .timeline-dot svg { width: 18px; height: 18px; }
+      .timeline-header { flex-direction: column; gap: 0.1rem; }
+      .exp-dates { margin-left: 0; }
       .projects-grid { grid-template-columns: 1fr; }
       .project-card.featured { grid-column: span 1; flex-direction: column; gap: 1rem; }
       #hero { padding: 5.5rem 1.5rem 3rem; }
@@ -623,11 +664,11 @@
         <span class="pin">&#x1F4CD;</span> Atlanta Metro Area &nbsp;&middot;&nbsp; QA Lead &nbsp;&middot;&nbsp; AI Innovator
       </p>
       <h1 class="hero-name">Romy<br /><em>Medan</em></h1>
-      <p class="hero-title">Quality Assurance &middot; AI-Augmented Testing &middot; Healthcare Tech</p>
+      <p class="hero-title">Senior QA Lead &amp; SDET &middot; AI-First Engineering &middot; 15+ Years</p>
       <p class="hero-bio">
-        I lead quality assurance for AscOne at Ascension, where deep QA expertise meets a growing
-        passion for AI-powered automation. From building agentic testing pipelines to championing
-        accessibility, I believe great software is built by people who genuinely care.
+        Senior QA Team Lead and SDET with 15+ years of experience in AI-First Engineering.
+        I pioneered AI/LLM testing at Ascension &mdash; from agentic quality systems to autonomous
+        test generation &mdash; optimizing global QA processes for high-velocity delivery.
       </p>
       <div class="hero-cta-group">
         <a class="btn btn-primary" href="#contact-bg">Say Hello</a>
@@ -643,67 +684,128 @@
       <h2 class="section-title reveal">Work Experience</h2>
       <div class="section-bar reveal"></div>
 
-      <!-- Ascension -->
-      <div class="exp-card reveal">
-        <div class="exp-left">
-          <div class="company-logo-wrap">
-            <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Ascension trinity knot -->
-              <ellipse cx="50" cy="36" rx="18" ry="22" stroke="#1E3A6E" stroke-width="5.5" fill="none" transform="rotate(0 50 50)"/>
-              <ellipse cx="36" cy="60" rx="18" ry="22" stroke="#D44B8A" stroke-width="5.5" fill="none" transform="rotate(120 50 50)"/>
-              <ellipse cx="64" cy="60" rx="18" ry="22" stroke="#2A9D8F" stroke-width="5.5" fill="none" transform="rotate(240 50 50)"/>
+      <div class="timeline">
+
+        <!-- Ascension -->
+        <div class="timeline-item reveal">
+          <div class="timeline-dot">
+            <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
+              <ellipse cx="50" cy="36" rx="18" ry="22" stroke="#1E3A6E" stroke-width="6" fill="none" transform="rotate(0 50 50)"/>
+              <ellipse cx="36" cy="60" rx="18" ry="22" stroke="#D44B8A" stroke-width="6" fill="none" transform="rotate(120 50 50)"/>
+              <ellipse cx="64" cy="60" rx="18" ry="22" stroke="#2A9D8F" stroke-width="6" fill="none" transform="rotate(240 50 50)"/>
             </svg>
           </div>
-          <div class="exp-dates">2022 &ndash; Present</div>
-        </div>
-        <div>
-          <p class="exp-company">Ascension &middot; AscOne</p>
-          <h3 class="exp-role">QA Lead</h3>
-          <p class="exp-desc">
-            Leading quality assurance for the AscOne product as part of Team Green &mdash; overseeing
-            end-to-end test strategy across web and mobile. I manage sprint health metrics,
-            automation coverage reporting, and regression cycles using Jira and Zephyr Scale,
-            collaborating with engineering, product, and our scrum master to ship every release
-            with the highest standards that healthcare demands.
+          <div class="timeline-header">
+            <p class="exp-company">Ascension</p>
+            <span class="exp-dates">Jan 2023 &ndash; Present</span>
+          </div>
+          <h3 class="exp-role">QA Team Lead</h3>
+          <p class="exp-summary">
+            Defining and owning end-to-end QA strategy for an AI-first engineering organization, managing a 4-member team.
           </p>
+          <ul class="exp-highlights">
+            <li>Pioneered agentic quality systems and autonomous test generation for AI/LLM features, achieving 95% test coverage</li>
+            <li>Architected scalable automation frameworks, reducing resolution time by 25% with 100% on-time delivery</li>
+            <li>Authored the WTR QA Best Practices document, adopted as the team-wide automation standard</li>
+          </ul>
           <div class="exp-tags">
             <span class="tag plum">Playwright</span>
-            <span class="tag plum">Jira / Zephyr Scale</span>
-            <span class="tag sage">Accessibility Testing</span>
-            <span class="tag">Sprint Metrics</span>
-            <span class="tag sage">Healthcare IT</span>
-            <span class="tag">Test Strategy</span>
+            <span class="tag plum">TypeScript</span>
+            <span class="tag sage">AI/LLM Testing</span>
+            <span class="tag">Jira / Zephyr Scale</span>
+            <span class="tag sage">Cekura</span>
           </div>
         </div>
-      </div>
 
-      <!-- Amazon -->
-      <div class="exp-card reveal reveal-delay-1">
-        <div class="exp-left">
-          <div class="company-logo-wrap">
-            <svg width="38" height="38" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Amazon -->
+        <div class="timeline-item reveal reveal-delay-1">
+          <div class="timeline-dot">
+            <svg width="24" height="24" viewBox="0 0 100 100" fill="none">
               <rect width="100" height="100" rx="8" fill="#232F3E"/>
               <text x="50" y="48" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#fff">a</text>
               <path d="M30 62 Q50 74 70 62" stroke="#FF9900" stroke-width="5" stroke-linecap="round" fill="none"/>
               <path d="M64 58 L72 62 L64 66" fill="#FF9900"/>
             </svg>
           </div>
-          <div class="exp-dates">Earlier Career</div>
-        </div>
-        <div>
-          <p class="exp-company">Amazon</p>
-          <h3 class="exp-role">QA Engineer</h3>
-          <p class="exp-desc">
-            Built a strong foundation in software quality engineering &mdash; from manual testing and
-            defect lifecycle management to early automation work. Developed a keen eye for edge
-            cases and a systems-level understanding of how great products are tested and shipped at scale.
+          <div class="timeline-header">
+            <p class="exp-company">Amazon</p>
+            <span class="exp-dates">Jan 2021 &ndash; Jan 2023</span>
+          </div>
+          <h3 class="exp-role">QA Engineer II</h3>
+          <p class="exp-summary">
+            Engineered automated test suites and introduced BDD practices at scale for mobile and web platforms.
           </p>
+          <ul class="exp-highlights">
+            <li>Achieved 90% regression coverage using Java, Selenium, and Appium across mobile and web</li>
+            <li>Optimized AWS Device Farm workflows for parallel cross-device execution, cutting test time by 50%</li>
+            <li>Directed Alexa integration testing for AMP, identifying critical bottlenecks before release</li>
+          </ul>
           <div class="exp-tags">
-            <span class="tag amber">Manual QA</span>
-            <span class="tag amber">Defect Management</span>
-            <span class="tag">Test Automation</span>
+            <span class="tag amber">Java</span>
+            <span class="tag amber">Selenium / Appium</span>
+            <span class="tag">AWS Device Farm</span>
+            <span class="tag">Cucumber (BDD)</span>
           </div>
         </div>
+
+        <!-- Honeywell -->
+        <div class="timeline-item reveal reveal-delay-2">
+          <div class="timeline-dot">
+            <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
+              <rect width="100" height="100" rx="8" fill="#E31937"/>
+              <text x="50" y="62" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="#fff">H</text>
+            </svg>
+          </div>
+          <div class="timeline-header">
+            <p class="exp-company">Honeywell</p>
+            <span class="exp-dates">Jan 2018 &ndash; Dec 2019</span>
+          </div>
+          <h3 class="exp-role">Senior Automation QA Engineer</h3>
+          <p class="exp-summary">
+            Automated CI/CD pipelines and mentored junior engineers on framework architecture and best practices.
+          </p>
+          <ul class="exp-highlights">
+            <li>Built CI/CD pipelines using Jenkins, Java Selenium, and Rest Assured for faster release cycles</li>
+            <li>Decreased escaped bugs by 15% through systematic root cause analysis</li>
+            <li>Collaborated with offshore teams to maintain 100% framework uptime</li>
+          </ul>
+          <div class="exp-tags">
+            <span class="tag">Jenkins</span>
+            <span class="tag">Rest Assured</span>
+            <span class="tag plum">Java Selenium</span>
+            <span class="tag sage">CI/CD</span>
+          </div>
+        </div>
+
+        <!-- NCR -->
+        <div class="timeline-item reveal reveal-delay-3">
+          <div class="timeline-dot">
+            <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
+              <rect width="100" height="100" rx="8" fill="#005DAA"/>
+              <text x="50" y="64" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#fff">NCR</text>
+            </svg>
+          </div>
+          <div class="timeline-header">
+            <p class="exp-company">NCR</p>
+            <span class="exp-dates">Jan 2016 &ndash; Dec 2018</span>
+          </div>
+          <h3 class="exp-role">Automation QA Engineer</h3>
+          <p class="exp-summary">
+            Designed integration and regression test suites for a large-scale e-commerce platform.
+          </p>
+          <ul class="exp-highlights">
+            <li>Achieved 100% test coverage for critical user journeys using Selenium WebDriver</li>
+            <li>Executed parallel cross-browser tests across 50+ browser/OS combinations via BrowserStack</li>
+            <li>Implemented BDD integration tests using Behat and PHP</li>
+          </ul>
+          <div class="exp-tags">
+            <span class="tag amber">Selenium WebDriver</span>
+            <span class="tag">BrowserStack</span>
+            <span class="tag">Behat (BDD)</span>
+            <span class="tag">PHP</span>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
