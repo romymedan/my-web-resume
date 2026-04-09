@@ -4,7 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Romy Medan — QA Lead & AI Innovator</title>
-  <meta name="description" content="Romy Medan — QA Lead & AI Innovator based in the Atlanta Metro Area. Leading quality assurance for AscOne at Ascension with AI-augmented testing." />
+  <meta name="title" content="Romy Medan — QA Lead & AI Innovator | Portfolio" />
+  <meta name="description" content="Senior QA Team Lead and SDET with 15+ years of experience in AI-first engineering, agentic quality systems, and autonomous test generation. Based in Atlanta Metro Area." />
+  <meta name="keywords" content="QA Lead, SDET, AI Testing, LLM Testing, Playwright, Test Automation, Agentic QA, Atlanta" />
+
+  <!-- Open Graph (LinkedIn, Slack, Facebook previews) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://romymedan.github.io/my-web-resume/" />
+  <meta property="og:title" content="Romy Medan — QA Lead & AI Innovator" />
+  <meta property="og:description" content="15+ years in QA engineering. Pioneering AI/LLM testing, agentic quality systems, and autonomous test generation." />
+  <meta property="og:image" content="https://romymedan.github.io/my-web-resume/assets/romy-photo.jpg" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Romy Medan — QA Lead & AI Innovator" />
+  <meta name="twitter:description" content="15+ years in QA engineering. Pioneering AI/LLM testing, agentic quality systems, and autonomous test generation." />
+  <meta name="twitter:image" content="https://romymedan.github.io/my-web-resume/assets/romy-photo.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -272,6 +287,28 @@
       margin-bottom: 2rem;
       letter-spacing: 0.03em;
       animation: fadeUp 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.3s both;
+    }
+
+    .hero-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--sage-dark);
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.35s both;
+    }
+    .hero-status .status-dot {
+      width: 8px; height: 8px;
+      background: var(--sage);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
     }
 
     .hero-bio {
@@ -705,6 +742,7 @@
         </p>
         <h1 class="hero-name">Romy <em>Medan</em></h1>
         <p class="hero-title">Senior QA Lead &amp; SDET &middot; AI-First Engineering &middot; 15+ Years</p>
+        <p class="hero-status"><span class="status-dot"></span> Open to QA leadership roles where AI-driven quality and team growth intersect.</p>
         <p class="hero-bio">
           Senior QA Team Lead and SDET with 15+ years of experience in AI-First Engineering.
           I pioneered AI/LLM testing at Ascension - from agentic quality systems to autonomous
