@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The AgenticQA Journey - Romy Medan</title>
+  <meta name="description" content="Weekly notes on building an AI-powered QA pipeline — what's working, what's breaking, and what I'm learning along the way." />
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FAF7F2;
+      --cream-dark: #F0EBE1;
+      --rose: #C8857A;
+      --rose-light: #F0D5D0;
+      --rose-deep: #A85F55;
+      --sage: #7A9E8A;
+      --sage-light: #C8DDD0;
+      --sage-dark: #4E7260;
+      --plum: #7B5EA7;
+      --plum-light: #E4DAF5;
+      --amber: #D4923A;
+      --amber-light: #F5E0C0;
+      --warm-brown: #7A5C4E;
+      --text-dark: #3A2E28;
+      --text-mid: #6B5248;
+      --text-light: #9E8278;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Nunito', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--text-dark);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ——— NAV ——— */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 3rem;
+      background: rgba(250, 247, 242, 0.88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(200,133,122,0.12);
+      transition: box-shadow 0.4s, background 0.4s;
+    }
+    nav.scrolled {
+      box-shadow: 0 4px 32px rgba(122,94,78,0.10);
+      background: rgba(250, 247, 242, 0.95);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 400;
+      color: var(--text-dark);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+    .nav-logo span { color: var(--rose); font-style: italic; }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      text-decoration: none;
+      transition: color 0.25s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0; right: 0;
+      height: 1.5px;
+      background: var(--rose);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .nav-links a:hover { color: var(--rose); }
+    .nav-links a:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    .nav-links a.active {
+      color: var(--rose);
+    }
+    .nav-links a.active::after {
+      transform: scaleX(1);
+    }
+
+    /* Mobile menu button */
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 32px;
+      height: 24px;
+      position: relative;
+      z-index: 110;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: var(--text-dark);
+      border-radius: 2px;
+      position: absolute;
+      left: 0;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .nav-toggle span:nth-child(1) { top: 2px; }
+    .nav-toggle span:nth-child(2) { top: 11px; }
+    .nav-toggle span:nth-child(3) { top: 20px; }
+    .nav-toggle.active span:nth-child(1) { top: 11px; transform: rotate(45deg); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; transform: translateX(-8px); }
+    .nav-toggle.active span:nth-child(3) { top: 11px; transform: rotate(-45deg); }
+
+    /* Mobile overlay */
+    .mobile-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 99;
+      background: rgba(58,46,40,0.3);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .mobile-overlay.visible { opacity: 1; pointer-events: auto; }
+
+    /* ——— LISTING LAYOUT ——— */
+    .listing-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 7rem 2rem 4rem;
+    }
+
+    /* ——— LISTING HEADER ——— */
+    .listing-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 0.6rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.9rem);
+      font-weight: 300;
+      color: var(--text-dark);
+      line-height: 1.15;
+    }
+
+    .section-bar {
+      width: 56px;
+      height: 3px;
+      background: linear-gradient(to right, var(--rose), var(--plum), var(--sage));
+      border-radius: 2px;
+      margin: 0.9rem auto 1.5rem;
+    }
+
+    .section-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-mid);
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ——— POST CARDS ——— */
+    .posts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .post-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(122,94,78,0.05);
+      border-left: 4px solid var(--sage);
+      padding: 1.5rem 1.75rem;
+      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .post-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(122,94,78,0.1);
+    }
+    .post-card.rose-border { border-left-color: var(--rose); }
+    .post-card.plum-border { border-left-color: var(--plum); }
+    .post-card.amber-border { border-left-color: var(--amber); }
+
+    .post-card-meta {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 0.5rem;
+    }
+    .post-card-meta.rose { color: var(--rose); }
+    .post-card-meta.plum { color: var(--plum); }
+    .post-card-meta.amber { color: var(--amber); }
+
+    .post-card-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 400;
+      color: var(--text-dark);
+      line-height: 1.25;
+      margin-bottom: 0.6rem;
+    }
+
+    .post-card-excerpt {
+      font-size: 0.88rem;
+      color: var(--text-mid);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .post-card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    /* Tags */
+    .tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.28rem 0.75rem;
+      border-radius: 50px;
+    }
+    .tag-sage { background: var(--sage-light); color: var(--sage-dark); }
+    .tag-plum { background: var(--plum-light); color: var(--plum); }
+    .tag-rose { background: var(--rose-light); color: var(--rose-deep); }
+    .tag-amber { background: var(--amber-light); color: var(--amber); }
+
+    /* ——— REVEAL ANIMATIONS ——— */
+    .reveal {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 0.7s cubic-bezier(0.23, 1, 0.32, 1), transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ——— SITE FOOTER ——— */
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      font-size: 0.82rem;
+      color: var(--text-light);
+      letter-spacing: 0.05em;
+      border-top: 1px solid var(--cream-dark);
+      margin-top: 2rem;
+    }
+
+    /* ——— MOBILE ——— */
+    @media (max-width: 750px) {
+      nav { padding: 1rem 1.5rem; }
+
+      .nav-toggle { display: block; }
+
+      .mobile-overlay { display: block; }
+
+      .nav-links {
+        position: fixed;
+        top: 0; right: 0;
+        width: min(320px, 85vw);
+        height: 100vh;
+        background: var(--cream);
+        flex-direction: column;
+        padding: 5rem 2rem 2rem;
+        gap: 1.6rem;
+        box-shadow: -8px 0 40px rgba(122,94,78,0.12);
+        transform: translateX(100%);
+        transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        z-index: 105;
+      }
+      .nav-links.open { transform: translateX(0); }
+      .nav-links a { font-size: 0.9rem; }
+
+      .listing-wrap {
+        padding: 5.5rem 1.2rem 3rem;
+      }
+
+      .post-card {
+        padding: 1.15rem 1.25rem;
+      }
+    }
+
+    /* ——— FOCUS STYLES ——— */
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--rose);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* ——— REDUCED MOTION ——— */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a class="nav-logo" href="../">Romy <span>Medan</span></a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../#experience-bg">Experience</a></li>
+      <li><a href="../#projects-bg">Projects</a></li>
+      <li><a href="./" class="active">Blog</a></li>
+      <li><a href="../#skills-bg">Skills</a></li>
+      <li><a href="../#interests-bg">Interests</a></li>
+      <li><a href="../#contact-bg">Contact</a></li>
+    </ul>
+  </nav>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <!-- BLOG LISTING -->
+  <main>
+    <div class="listing-wrap">
+
+      <!-- Listing header -->
+      <header class="listing-header">
+        <p class="section-label reveal">What I'm Building</p>
+        <h1 class="section-title reveal">The AgenticQA Journey</h1>
+        <div class="section-bar reveal" aria-hidden="true"></div>
+        <p class="section-subtitle reveal">Weekly notes on building an AI-powered QA pipeline &mdash; what's working, what's breaking, and what I'm learning along the way.</p>
+      </header>
+
+      <!-- Posts list -->
+      <div class="posts-list" role="list">
+        <a class="post-card reveal" href="posts/week-1-why-i-started-building-agenticqa.html" role="listitem">
+          <div class="post-card-meta">Week 1 &middot; April 16, 2026</div>
+          <h3 class="post-card-title">Why I Started Building AgenticQA</h3>
+          <p class="post-card-excerpt">I've been in QA for more than a decade. Everything else is now automated, but QA is still stuck in 2010. So I started building.</p>
+          <div class="post-card-tags">
+            <span class="tag tag-sage">QA</span>
+            <span class="tag tag-plum">AI Agents</span>
+            <span class="tag tag-rose">Playwright</span>
+            <span class="tag tag-amber">Side Project</span>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- SITE FOOTER -->
+  <footer>
+    Crafted with care &middot; Romy Medan &middot; Atlanta Metro Area
+  </footer>
+
+  <script>
+    // Nav scroll shadow
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 30);
+    }, { passive: true });
+
+    // Mobile nav toggle
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    const overlay = document.getElementById('mobileOverlay');
+
+    function closeMenu() {
+      navToggle.classList.remove('active');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navLinks.classList.remove('open');
+      overlay.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+
+    navToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.contains('open');
+      if (isOpen) {
+        closeMenu();
+      } else {
+        navToggle.classList.add('active');
+        navToggle.setAttribute('aria-expanded', 'true');
+        navLinks.classList.add('open');
+        overlay.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+
+    overlay.addEventListener('click', closeMenu);
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Scroll reveal
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  </script>
+</body>
+</html>
