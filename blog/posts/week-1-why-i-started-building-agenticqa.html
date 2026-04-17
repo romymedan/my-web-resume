@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why I Started Building AgenticQA - Romy Medan</title>
+  <meta name="description" content="Week 1: I've been in QA for more than a decade. Everything else is automated, but QA is still stuck in 2010. So I started building AgenticQA." />
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FAF7F2;
+      --cream-dark: #F0EBE1;
+      --rose: #C8857A;
+      --rose-light: #F0D5D0;
+      --rose-deep: #A85F55;
+      --sage: #7A9E8A;
+      --sage-light: #C8DDD0;
+      --sage-dark: #4E7260;
+      --plum: #7B5EA7;
+      --plum-light: #E4DAF5;
+      --amber: #D4923A;
+      --amber-light: #F5E0C0;
+      --warm-brown: #7A5C4E;
+      --text-dark: #3A2E28;
+      --text-mid: #6B5248;
+      --text-light: #9E8278;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Nunito', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--text-dark);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ——— NAV ——— */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 3rem;
+      background: rgba(250, 247, 242, 0.88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(200,133,122,0.12);
+      transition: box-shadow 0.4s, background 0.4s;
+    }
+    nav.scrolled {
+      box-shadow: 0 4px 32px rgba(122,94,78,0.10);
+      background: rgba(250, 247, 242, 0.95);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 400;
+      color: var(--text-dark);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+    .nav-logo span { color: var(--rose); font-style: italic; }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      text-decoration: none;
+      transition: color 0.25s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0; right: 0;
+      height: 1.5px;
+      background: var(--rose);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .nav-links a:hover { color: var(--rose); }
+    .nav-links a:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    .nav-links a.active {
+      color: var(--rose);
+    }
+    .nav-links a.active::after {
+      transform: scaleX(1);
+    }
+
+    /* Mobile menu button */
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 32px;
+      height: 24px;
+      position: relative;
+      z-index: 110;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: var(--text-dark);
+      border-radius: 2px;
+      position: absolute;
+      left: 0;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .nav-toggle span:nth-child(1) { top: 2px; }
+    .nav-toggle span:nth-child(2) { top: 11px; }
+    .nav-toggle span:nth-child(3) { top: 20px; }
+    .nav-toggle.active span:nth-child(1) { top: 11px; transform: rotate(45deg); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; transform: translateX(-8px); }
+    .nav-toggle.active span:nth-child(3) { top: 11px; transform: rotate(-45deg); }
+
+    /* Mobile overlay */
+    .mobile-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 99;
+      background: rgba(58,46,40,0.3);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .mobile-overlay.visible { opacity: 1; pointer-events: auto; }
+
+    /* ——— POST LAYOUT ——— */
+    .post-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 7rem 2rem 4rem;
+    }
+
+    /* Back link */
+    .post-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--sage-dark);
+      text-decoration: none;
+      margin-bottom: 2.5rem;
+      transition: color 0.25s, gap 0.25s;
+    }
+    .post-back:hover {
+      color: var(--sage);
+      gap: 0.6rem;
+    }
+    .post-back svg {
+      flex-shrink: 0;
+      transition: transform 0.25s;
+    }
+    .post-back:hover svg { transform: translateX(-3px); }
+
+    /* Post meta */
+    .post-meta {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 0.8rem;
+    }
+
+    /* Post title */
+    .post-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--text-dark);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Tags */
+    .post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.8rem;
+    }
+    .tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.28rem 0.75rem;
+      border-radius: 50px;
+    }
+    .tag-sage { background: var(--sage-light); color: var(--sage-dark); }
+    .tag-plum { background: var(--plum-light); color: var(--plum); }
+    .tag-rose { background: var(--rose-light); color: var(--rose-deep); }
+    .tag-amber { background: var(--amber-light); color: var(--amber); }
+
+    /* Gradient divider */
+    .post-divider {
+      height: 3px;
+      background: linear-gradient(to right, var(--rose-light), var(--sage-light), var(--plum-light));
+      border-radius: 2px;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Post body */
+    .post-body {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: var(--text-mid);
+    }
+    .post-body p {
+      margin-bottom: 1.4rem;
+    }
+    .post-body h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 3vw, 1.8rem);
+      font-weight: 400;
+      color: var(--text-dark);
+      margin-top: 2.4rem;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    .post-body strong {
+      color: var(--text-dark);
+      font-weight: 700;
+    }
+    .post-body em {
+      font-style: italic;
+      color: var(--text-light);
+    }
+
+    /* Ordered list - custom numbered circles */
+    .post-body ol {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .post-body ol li {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      background: rgba(122, 158, 138, 0.06);
+      border: 1px solid rgba(122, 158, 138, 0.15);
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+      font-size: 1rem;
+      color: var(--text-mid);
+      counter-increment: steps;
+    }
+    .post-body ol {
+      counter-reset: steps;
+    }
+    .post-body ol li::before {
+      content: counter(steps);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      background: var(--sage);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: var(--font-body);
+      margin-top: 0.1rem;
+    }
+
+    /* Tech stack pills */
+    .tech-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-bottom: 1.4rem;
+    }
+    .tech-pill {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 0.3rem 0.75rem;
+      background: var(--cream-dark);
+      border: 1px solid rgba(122, 94, 78, 0.2);
+      border-radius: 50px;
+      color: var(--text-mid);
+    }
+
+    /* Post footer */
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--cream-dark);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .post-footer-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    /* Share button */
+    .btn-share {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.4rem;
+      border-radius: 50px;
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-decoration: none;
+      color: var(--plum);
+      border: 1.5px solid var(--plum);
+      background: transparent;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .btn-share:hover {
+      background: var(--plum);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(123, 94, 167, 0.25);
+    }
+    .btn-share svg { flex-shrink: 0; }
+
+    .post-footer-follow {
+      font-size: 0.88rem;
+      color: var(--text-light);
+    }
+    .post-footer-follow a {
+      color: var(--rose);
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.25s;
+    }
+    .post-footer-follow a:hover { color: var(--rose-deep); }
+
+    /* ——— SITE FOOTER ——— */
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      font-size: 0.82rem;
+      color: var(--text-light);
+      letter-spacing: 0.05em;
+      border-top: 1px solid var(--cream-dark);
+      margin-top: 2rem;
+    }
+
+    /* ——— MOBILE ——— */
+    @media (max-width: 750px) {
+      nav { padding: 1rem 1.5rem; }
+
+      .nav-toggle { display: block; }
+
+      .mobile-overlay { display: block; }
+
+      .nav-links {
+        position: fixed;
+        top: 0; right: 0;
+        width: min(320px, 85vw);
+        height: 100vh;
+        background: var(--cream);
+        flex-direction: column;
+        padding: 5rem 2rem 2rem;
+        gap: 1.6rem;
+        box-shadow: -8px 0 40px rgba(122,94,78,0.12);
+        transform: translateX(100%);
+        transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        z-index: 105;
+      }
+      .nav-links.open { transform: translateX(0); }
+      .nav-links a { font-size: 0.9rem; }
+
+      .post-wrap {
+        padding: 5.5rem 1.2rem 3rem;
+      }
+      .post-title {
+        font-size: clamp(1.6rem, 7vw, 2rem);
+      }
+      .post-body ol {
+        padding-left: 0;
+      }
+      .post-footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .post-footer-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+      }
+      .btn-share {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* ——— FOCUS STYLES ——— */
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--rose);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* ——— REDUCED MOTION ——— */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a class="nav-logo" href="../../">Romy <span>Medan</span></a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../../#experience-bg">Experience</a></li>
+      <li><a href="../../#projects-bg">Projects</a></li>
+      <li><a href="../" class="active">Blog</a></li>
+      <li><a href="../../#skills-bg">Skills</a></li>
+      <li><a href="../../#interests-bg">Interests</a></li>
+      <li><a href="../../#contact-bg">Contact</a></li>
+    </ul>
+  </nav>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <!-- BLOG POST -->
+  <main>
+    <div class="post-wrap">
+
+      <!-- Back link -->
+      <a class="post-back" href="../">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        All posts
+      </a>
+
+      <article>
+        <!-- Post meta -->
+        <p class="post-meta">Week 1 &middot; April 16, 2026</p>
+
+        <!-- Post title -->
+        <h1 class="post-title">Why I Started Building AgenticQA</h1>
+
+        <!-- Tags -->
+        <div class="post-tags" role="list" aria-label="Post tags">
+          <span class="tag tag-sage" role="listitem">QA</span>
+          <span class="tag tag-plum" role="listitem">AI Agents</span>
+          <span class="tag tag-rose" role="listitem">Playwright</span>
+          <span class="tag tag-amber" role="listitem">Side Project</span>
+        </div>
+
+        <!-- Gradient divider -->
+        <div class="post-divider" aria-hidden="true"></div>
+
+        <!-- Post body -->
+        <div class="post-body">
+          <p>I've been in QA for more than a decade. Amazon, Honeywell, NCR. Led teams, built frameworks, caught bugs nobody else would have found.</p>
+
+          <p>And honestly&hellip; it's crazy how innovation has been hard to adopt for QA teams.</p>
+
+          <p>We're still doing the same thing we did in 2010: read a Jira ticket, write test cases, run them, file bugs with screenshots and steps to reproduce. Retest, reopen, all over again. Every sprint. Every ticket.</p>
+
+          <p>Everything else is now automated: from coding, deployments, infrastructure, and even code reviews. But QA? We're still copy-pasting into Jira.</p>
+
+          <h2>Going Deep on AI Agents</h2>
+
+          <p>Around the same time, I started testing agentic systems and chatbots, and decided to go deep on learning how AI agents work. What they can actually do. How they fail. How you orchestrate them into something useful. And I thought: why not point that at the problem I know best?</p>
+
+          <p>So I started building. On my own time. No sprint, no ticket, no one asking for it.</p>
+
+          <h2>The Pipeline</h2>
+
+          <p>I'm calling it <strong>AgenticQA</strong>. It's an 8-step AI pipeline where each step is its own agent, running sequentially like a real QA workflow:</p>
+
+          <ol>
+            <li>Reads the Jira ticket and acceptance criteria</li>
+            <li>Explores the target URL with a real browser, navigates pages, takes snapshots, reads content</li>
+            <li>Enriches the criteria using the ticket, Figma designs, and the explorer's findings</li>
+            <li>Generates test cases, including happy paths and edge cases</li>
+            <li>Executes them in a real browser using Playwright and captures failure screenshots</li>
+            <li>Writes bug reports in Jira format, including steps to reproduce, severity, and environment</li>
+            <li>Runs WCAG 2.1 accessibility checks with axe-core</li>
+            <li>Outputs a reusable Playwright test script</li>
+          </ol>
+
+          <p>Built with:</p>
+
+          <div class="tech-pills" role="list" aria-label="Technologies used">
+            <span class="tech-pill" role="listitem">TypeScript</span>
+            <span class="tech-pill" role="listitem">React</span>
+            <span class="tech-pill" role="listitem">Express</span>
+            <span class="tech-pill" role="listitem">Playwright</span>
+            <span class="tech-pill" role="listitem">Claude API</span>
+            <span class="tech-pill" role="listitem">axe-core</span>
+            <span class="tech-pill" role="listitem">Railway</span>
+          </div>
+
+          <p>Real-time updates stream to a dashboard so you can watch each agent work. Deployed on Railway as a single service.</p>
+
+          <h2>What's Next</h2>
+
+          <p>It's not done. I'm still building, still breaking things, still learning how agentic systems fail in ways I didn't expect. But it already reads real tickets, explores real pages, runs a real browser, and files real bugs.</p>
+
+          <p>I'm not trying to replace QA engineers. I'm trying to stop wasting their time on work that a machine should've been doing years ago.</p>
+
+          <p><em>This is post one of a series. I'll share what I'm building as I go, what's working, what's not, and what I'm still figuring out along the way.</em></p>
+        </div>
+
+        <!-- Post footer -->
+        <footer class="post-footer">
+          <div class="post-footer-actions">
+            <a class="btn-share" href="https://www.linkedin.com/in/romymedan" target="_blank" rel="noopener noreferrer" aria-label="Share on LinkedIn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+              Share on LinkedIn
+            </a>
+          </div>
+          <p class="post-footer-follow">Follow the journey on <a href="https://www.linkedin.com/in/romymedan" target="_blank" rel="noopener noreferrer">LinkedIn</a></p>
+        </footer>
+      </article>
+
+    </div>
+  </main>
+
+  <!-- SITE FOOTER -->
+  <footer>
+    Crafted with care &middot; Romy Medan &middot; Atlanta Metro Area
+  </footer>
+
+  <script>
+    // Nav scroll shadow
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 30);
+    }, { passive: true });
+
+    // Mobile nav toggle
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    const overlay = document.getElementById('mobileOverlay');
+
+    function closeMenu() {
+      navToggle.classList.remove('active');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navLinks.classList.remove('open');
+      overlay.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+
+    navToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.contains('open');
+      if (isOpen) {
+        closeMenu();
+      } else {
+        navToggle.classList.add('active');
+        navToggle.setAttribute('aria-expanded', 'true');
+        navLinks.classList.add('open');
+        overlay.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+
+    overlay.addEventListener('click', closeMenu);
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+  </script>
+</body>
+</html>
