@@ -286,11 +286,22 @@
       font-size: 0.75rem;
       font-weight: 700;
       letter-spacing: 0.06em;
-      padding: 0.3rem 0.8rem;
+      padding: 0;
       border-radius: 50px;
       border: 1.5px solid var(--plum-light);
       background: rgba(228, 218, 245, 0.35);
       color: var(--plum);
+      transition: background 0.25s, border-color 0.25s;
+    }
+    .principles li:hover {
+      background: var(--plum-light);
+      border-color: var(--plum);
+    }
+    .principles li a {
+      display: block;
+      padding: 0.3rem 0.8rem;
+      color: inherit;
+      text-decoration: none;
     }
 
     /* Before / After comparison */
@@ -592,11 +603,11 @@
           <p>I created two: a <code>qa-best-practices</code> skill that enforces our QA standards (no duplicates, every test tied to something real on the page), and a <code>code-review</code> skill that checks for the principles I actually care about:</p>
 
           <ul class="principles">
-            <li title="Don't Repeat Yourself - every piece of knowledge should have a single source of truth">DRY</li>
-            <li title="Single responsibility, Open-closed, Liskov substitution, Interface segregation, Dependency inversion">SOLID</li>
-            <li title="Keep It Simple, Stupid - the simplest solution is usually the best one">KISS</li>
-            <li title="You Aren't Gonna Need It - don't build features until they're actually needed">YAGNI</li>
-            <li title="Write code that reads like well-written prose - clear naming, small functions, minimal surprises">Clean Code</li>
+            <li><a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself" target="_blank" rel="noopener noreferrer">DRY</a></li>
+            <li><a href="https://en.wikipedia.org/wiki/SOLID" target="_blank" rel="noopener noreferrer">SOLID</a></li>
+            <li><a href="https://en.wikipedia.org/wiki/KISS_principle" target="_blank" rel="noopener noreferrer">KISS</a></li>
+            <li><a href="https://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it" target="_blank" rel="noopener noreferrer">YAGNI</a></li>
+            <li><a href="https://en.wikipedia.org/wiki/Robert_C._Martin" target="_blank" rel="noopener noreferrer">Clean Code</a></li>
           </ul>
 
           <p>Encoding "how we do things here" in a plain text file and letting every agent load it. That might be the simplest and most underrated thing you can do in an agentic system.</p>
