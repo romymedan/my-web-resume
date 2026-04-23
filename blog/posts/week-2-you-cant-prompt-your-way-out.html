@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>You Can't Prompt Your Way Out of a Missing Ground Truth - Romy Medan</title>
+  <meta name="description" content="Week 2: The pipeline was producing 50 acceptance criteria per ticket. Duplicates everywhere. Over 90% failing before they even ran. Here's what I changed." />
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FAF7F2;
+      --cream-dark: #F0EBE1;
+      --rose: #C8857A;
+      --rose-light: #F0D5D0;
+      --rose-deep: #A85F55;
+      --sage: #7A9E8A;
+      --sage-light: #C8DDD0;
+      --sage-dark: #4E7260;
+      --plum: #7B5EA7;
+      --plum-light: #E4DAF5;
+      --amber: #D4923A;
+      --amber-light: #F5E0C0;
+      --warm-brown: #7A5C4E;
+      --text-dark: #3A2E28;
+      --text-mid: #6B5248;
+      --text-light: #9E8278;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Nunito', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--text-dark);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* --- NAV --- */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 3rem;
+      background: rgba(250, 247, 242, 0.88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(200,133,122,0.12);
+      transition: box-shadow 0.4s, background 0.4s;
+    }
+    nav.scrolled {
+      box-shadow: 0 4px 32px rgba(122,94,78,0.10);
+      background: rgba(250, 247, 242, 0.95);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 400;
+      color: var(--text-dark);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+    .nav-logo span { color: var(--rose); font-style: italic; }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      text-decoration: none;
+      transition: color 0.25s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0; right: 0;
+      height: 1.5px;
+      background: var(--rose);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .nav-links a:hover { color: var(--rose); }
+    .nav-links a:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    .nav-links a.active {
+      color: var(--rose);
+    }
+    .nav-links a.active::after {
+      transform: scaleX(1);
+    }
+
+    /* Mobile menu button */
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 32px;
+      height: 24px;
+      position: relative;
+      z-index: 110;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: var(--text-dark);
+      border-radius: 2px;
+      position: absolute;
+      left: 0;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .nav-toggle span:nth-child(1) { top: 2px; }
+    .nav-toggle span:nth-child(2) { top: 11px; }
+    .nav-toggle span:nth-child(3) { top: 20px; }
+    .nav-toggle.active span:nth-child(1) { top: 11px; transform: rotate(45deg); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; transform: translateX(-8px); }
+    .nav-toggle.active span:nth-child(3) { top: 11px; transform: rotate(-45deg); }
+
+    /* Mobile overlay */
+    .mobile-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 99;
+      background: rgba(58,46,40,0.3);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .mobile-overlay.visible { opacity: 1; pointer-events: auto; }
+
+    /* --- POST LAYOUT --- */
+    .post-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 7rem 2rem 4rem;
+    }
+
+    /* Back link */
+    .post-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--sage-dark);
+      text-decoration: none;
+      margin-bottom: 2.5rem;
+      transition: color 0.25s, gap 0.25s;
+    }
+    .post-back:hover {
+      color: var(--sage);
+      gap: 0.6rem;
+    }
+    .post-back svg {
+      flex-shrink: 0;
+      transition: transform 0.25s;
+    }
+    .post-back:hover svg { transform: translateX(-3px); }
+
+    /* Post meta */
+    .post-meta {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 0.8rem;
+    }
+
+    /* Post title */
+    .post-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--text-dark);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Tags */
+    .post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.8rem;
+    }
+    .tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.28rem 0.75rem;
+      border-radius: 50px;
+    }
+    .tag-sage { background: var(--sage-light); color: var(--sage-dark); }
+    .tag-plum { background: var(--plum-light); color: var(--plum); }
+    .tag-rose { background: var(--rose-light); color: var(--rose-deep); }
+    .tag-amber { background: var(--amber-light); color: var(--amber); }
+
+    /* Gradient divider */
+    .post-divider {
+      height: 3px;
+      background: linear-gradient(to right, var(--rose-light), var(--sage-light), var(--plum-light));
+      border-radius: 2px;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Post body */
+    .post-body {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: var(--text-mid);
+    }
+    .post-body p {
+      margin-bottom: 1.4rem;
+    }
+    .post-body h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 3vw, 1.8rem);
+      font-weight: 400;
+      color: var(--text-dark);
+      margin-top: 2.4rem;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    .post-body strong {
+      color: var(--text-dark);
+      font-weight: 700;
+    }
+    .post-body em {
+      font-style: italic;
+      color: var(--text-light);
+    }
+    .post-body code {
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 0.88em;
+      background: var(--cream-dark);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text-dark);
+    }
+
+    /* Pullquote */
+    .post-body .pullquote {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-style: italic;
+      color: var(--plum);
+      line-height: 1.5;
+      border-left: 3px solid var(--plum-light);
+      padding-left: 1.25rem;
+      margin: 2rem 0;
+    }
+
+    /* Principles pills */
+    .principles {
+      list-style: none;
+      margin: 1rem 0 1.4rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .principles li {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      border: 1.5px solid var(--plum-light);
+      background: rgba(228, 218, 245, 0.35);
+      color: var(--plum);
+    }
+
+    /* Before / After comparison */
+    .comparison {
+      margin: 2rem 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .comp-panel {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--cream-dark);
+      background: #fff;
+    }
+    .comp-head {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.6rem 1rem;
+    }
+    .comp-panel.before .comp-head {
+      background: var(--rose-light);
+      color: var(--rose-deep);
+      border-bottom: 1px solid rgba(200,133,122,0.25);
+    }
+    .comp-panel.after .comp-head {
+      background: var(--sage-light);
+      color: var(--sage-dark);
+      border-bottom: 1px solid rgba(122,158,138,0.25);
+    }
+    .comp-body { padding: 0.75rem 1rem; }
+    .comp-item {
+      font-size: 0.82rem;
+      line-height: 1.5;
+      padding: 0.45rem 0.6rem;
+      border-radius: 6px;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .comp-item:last-child { margin-bottom: 0; }
+    .comp-panel.before .comp-item {
+      background: rgba(200,133,122,0.08);
+      color: var(--rose-deep);
+    }
+    .comp-panel.after .comp-item {
+      background: rgba(122,158,138,0.08);
+      color: var(--sage-dark);
+    }
+    .comp-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+    .comp-panel.before .comp-dot { background: var(--rose); }
+    .comp-panel.after .comp-dot { background: var(--sage); }
+    .comp-footer {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-top: 1px solid var(--cream-dark);
+      color: var(--text-light);
+    }
+
+    /* Kicker closing */
+    .post-body .kicker {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-top: 2rem;
+    }
+    .post-body .final-line {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--plum);
+      margin-top: 0.3rem;
+    }
+
+    /* Hashtags */
+    .post-hashtags {
+      margin-top: 2rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--cream-dark);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--plum);
+      letter-spacing: 0.02em;
+      line-height: 2;
+    }
+
+    /* Post footer */
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--cream-dark);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .post-footer-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    /* Share button */
+    .btn-share {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.4rem;
+      border-radius: 50px;
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-decoration: none;
+      color: var(--plum);
+      border: 1.5px solid var(--plum);
+      background: transparent;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .btn-share:hover {
+      background: var(--plum);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(123, 94, 167, 0.25);
+    }
+    .btn-share svg { flex-shrink: 0; }
+
+    .post-footer-follow {
+      font-size: 0.88rem;
+      color: var(--text-light);
+    }
+    .post-footer-follow a {
+      color: var(--rose);
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.25s;
+    }
+    .post-footer-follow a:hover { color: var(--rose-deep); }
+
+    /* --- SITE FOOTER --- */
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      font-size: 0.82rem;
+      color: var(--text-light);
+      letter-spacing: 0.05em;
+      border-top: 1px solid var(--cream-dark);
+      margin-top: 2rem;
+    }
+
+    /* --- MOBILE --- */
+    @media (max-width: 750px) {
+      nav { padding: 1rem 1.5rem; }
+
+      .nav-toggle { display: block; }
+
+      .mobile-overlay { display: block; }
+
+      .nav-links {
+        position: fixed;
+        top: 0; right: 0;
+        width: min(320px, 85vw);
+        height: 100vh;
+        background: var(--cream);
+        flex-direction: column;
+        padding: 5rem 2rem 2rem;
+        gap: 1.6rem;
+        box-shadow: -8px 0 40px rgba(122,94,78,0.12);
+        transform: translateX(100%);
+        transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        z-index: 105;
+      }
+      .nav-links.open { transform: translateX(0); }
+      .nav-links a { font-size: 0.9rem; }
+
+      .post-wrap {
+        padding: 5.5rem 1.2rem 3rem;
+      }
+      .post-title {
+        font-size: clamp(1.6rem, 7vw, 2rem);
+      }
+      .comparison {
+        grid-template-columns: 1fr;
+      }
+      .post-footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .post-footer-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+      }
+      .btn-share {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* --- FOCUS STYLES --- */
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--rose);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* --- REDUCED MOTION --- */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a class="nav-logo" href="../../">Romy <span>Medan</span></a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../../#experience-bg">Experience</a></li>
+      <li><a href="../../#projects-bg">Projects</a></li>
+      <li><a href="../" class="active">Blog</a></li>
+      <li><a href="../../#skills-bg">Skills</a></li>
+      <li><a href="../../#interests-bg">Interests</a></li>
+      <li><a href="../../#contact-bg">Contact</a></li>
+    </ul>
+  </nav>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <!-- BLOG POST -->
+  <main>
+    <div class="post-wrap">
+
+      <!-- Back link -->
+      <a class="post-back" href="../">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        All posts
+      </a>
+
+      <article>
+        <!-- Post meta -->
+        <p class="post-meta">Week 2 &middot; April 22, 2026</p>
+
+        <!-- Post title -->
+        <h1 class="post-title">You Can't Prompt Your Way Out of a Missing Ground Truth</h1>
+
+        <!-- Tags -->
+        <div class="post-tags" role="list" aria-label="Post tags">
+          <span class="tag tag-sage" role="listitem">QA</span>
+          <span class="tag tag-plum" role="listitem">AI Agents</span>
+          <span class="tag tag-rose" role="listitem">Claude Skills</span>
+          <span class="tag tag-amber" role="listitem">Lessons Learned</span>
+        </div>
+
+        <!-- Gradient divider -->
+        <div class="post-divider" aria-hidden="true"></div>
+
+        <!-- Post body -->
+        <div class="post-body">
+          <p>This week I thought I was making progress. The pipeline was running, tests were being generated, the dashboard looked green.</p>
+
+          <p>Then I actually looked at the output.</p>
+
+          <p>The pipeline was producing 40, 50 acceptance criteria per ticket. Most were unnecessary - duplicated across viewports, checking things that didn't need checking, and some were testing content that wasn't even on the page.</p>
+
+          <p>I spent a few days trying to fix it with better prompts. Clearer instructions. More explicit rules. It helped a little. It didn't solve it.</p>
+
+          <p class="pullquote">You can't prompt your way out of a missing ground truth.</p>
+
+          <h2>Observe, Don't Speculate</h2>
+
+          <p>So I changed two things, both grounded in the same idea: <strong>observe, don't speculate.</strong></p>
+
+          <p><strong>First</strong>, I stopped letting the agents guess. Before any test gets generated, one agent opens the actual page in a real browser and records what's there. If a button, a form, or a modal wasn't found on the page, it doesn't get tested. Simple as that.</p>
+
+          <p><strong>Second</strong>, I added skills - plain text files that every agent reads before doing anything. Think of them as "how we do things here" docs, except the AI actually reads them every single time.</p>
+
+          <h2>Skills as Shared Standards</h2>
+
+          <p>I created two: a <code>qa-best-practices</code> skill that enforces our QA standards (no duplicates, every test tied to something real on the page), and a <code>code-review</code> skill that checks for the principles I actually care about:</p>
+
+          <ul class="principles">
+            <li title="Don't Repeat Yourself - every piece of knowledge should have a single source of truth">DRY</li>
+            <li title="Single responsibility, Open-closed, Liskov substitution, Interface segregation, Dependency inversion">SOLID</li>
+            <li title="Keep It Simple, Stupid - the simplest solution is usually the best one">KISS</li>
+            <li title="You Aren't Gonna Need It - don't build features until they're actually needed">YAGNI</li>
+            <li title="Write code that reads like well-written prose - clear naming, small functions, minimal surprises">Clean Code</li>
+          </ul>
+
+          <p>Encoding "how we do things here" in a plain text file and letting every agent load it. That might be the simplest and most underrated thing you can do in an agentic system.</p>
+
+          <h2>Before and After</h2>
+
+          <p>Here's what the output looks like before and after:</p>
+
+          <div class="comparison">
+            <div class="comp-panel before">
+              <div class="comp-head">Before</div>
+              <div class="comp-body">
+                <div class="comp-item"><span class="comp-dot"></span>Footer does not cause horizontal scrolling on desktop (&gt;=1024px)</div>
+                <div class="comp-item"><span class="comp-dot"></span>Footer does not cause horizontal scrolling on tablet (768-1023px)</div>
+                <div class="comp-item"><span class="comp-dot"></span>Footer does not cause horizontal scrolling on mobile (&lt;768px)</div>
+                <div class="comp-item"><span class="comp-dot"></span>Footer branding uses dark background consistent with design system</div>
+                <div class="comp-item"><span class="comp-dot"></span>No footer elements overlap adjacent page content sections</div>
+                <div class="comp-item"><span class="comp-dot"></span>Footer link with no hover state is flagged as missing interactivity</div>
+                <div class="comp-item"><span class="comp-dot"></span>Footer layout is consistent in Chrome when page loads</div>
+              </div>
+              <div class="comp-footer">51 tests, 7 failures - vague checks, duplicates across viewports</div>
+            </div>
+            <div class="comp-panel after">
+              <div class="comp-head">After</div>
+              <div class="comp-body">
+                <div class="comp-item"><span class="comp-dot"></span>Verify all 10 Solutions column footer links resolve with HTTP 200</div>
+                <div class="comp-item"><span class="comp-dot"></span>Verify all 4 Integrations column links: Source Code, ChatOps, Issue Management, AI</div>
+                <div class="comp-item"><span class="comp-dot"></span>Verify all 3 legal bar links: Privacy Policy, Terms of Use, Status</div>
+                <div class="comp-item"><span class="comp-dot"></span>Verify all 4 social media icon links resolve: LinkedIn, X, Facebook, Instagram</div>
+              </div>
+              <div class="comp-footer">10 tests, 1 failure - every test grounded in actual page content</div>
+            </div>
+          </div>
+
+          <p class="kicker">Fewer tests. But when they fail now, something actually broke.</p>
+
+          <div class="post-hashtags">
+            #agenticQA &nbsp;#llmtesting &nbsp;#claudeskills &nbsp;#buildinpublic &nbsp;#qaautomation &nbsp;#ai
+          </div>
+        </div>
+
+        <!-- Post footer -->
+        <footer class="post-footer">
+          <div class="post-footer-actions">
+            <a class="btn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https://romymedan.com/blog/posts/week-2-you-cant-prompt-your-way-out.html" target="_blank" rel="noopener noreferrer" aria-label="Share on LinkedIn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+              Share on LinkedIn
+            </a>
+          </div>
+          <p class="post-footer-follow">Follow the journey on <a href="https://www.linkedin.com/in/romymedan" target="_blank" rel="noopener noreferrer">LinkedIn</a></p>
+        </footer>
+      </article>
+
+    </div>
+  </main>
+
+  <!-- SITE FOOTER -->
+  <footer>
+    Crafted with care &middot; Romy Medan &middot; Atlanta Metro Area
+  </footer>
+
+  <script>
+    // Nav scroll shadow
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 30);
+    }, { passive: true });
+
+    // Mobile nav toggle
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    const overlay = document.getElementById('mobileOverlay');
+
+    function closeMenu() {
+      navToggle.classList.remove('active');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navLinks.classList.remove('open');
+      overlay.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+
+    navToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.contains('open');
+      if (isOpen) {
+        closeMenu();
+      } else {
+        navToggle.classList.add('active');
+        navToggle.setAttribute('aria-expanded', 'true');
+        navLinks.classList.add('open');
+        overlay.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+
+    overlay.addEventListener('click', closeMenu);
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+  </script>
+</body>
+</html>
