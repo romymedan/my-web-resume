@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>You Can't Prompt Your Way Out of a Missing Ground Truth - Romy Medan</title>
-  <meta name="description" content="Week 2: The pipeline was producing 50 acceptance criteria per ticket. Most were unnecessary - duplicated across viewports, testing content that wasn't even on the page. Here's what I changed." />
+  <meta name="description" content="Week 2: A code-review skill in Claude Code led me to ask - what if my pipeline agents had skills too? The Agent SDK supports it natively. But I chose not to use it. Here's why." />
   <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -385,6 +385,28 @@
       margin-top: 0.3rem;
     }
 
+    /* Code block */
+    .post-body .code-block {
+      background: #2d2a2e;
+      border-radius: 8px;
+      padding: 1.2rem 1.4rem;
+      margin: 1.4rem 0;
+      overflow-x: auto;
+      border: 1px solid rgba(122, 94, 78, 0.15);
+    }
+    .post-body .code-block code {
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 0.78rem;
+      line-height: 1.7;
+      color: #e3e1e4;
+      background: none;
+      padding: 0;
+      border-radius: 0;
+    }
+    .post-body .code-block .c-key { color: #78dce8; }
+    .post-body .code-block .c-str { color: #a9dc76; }
+    .post-body .code-block .c-com { color: #727072; font-style: italic; }
+
     /* Hashtags */
     .post-hashtags {
       margin-top: 2rem;
@@ -571,7 +593,7 @@
         <div class="post-tags" role="list" aria-label="Post tags">
           <span class="tag tag-sage" role="listitem">QA</span>
           <span class="tag tag-plum" role="listitem">AI Agents</span>
-          <span class="tag tag-rose" role="listitem">Claude Skills</span>
+          <span class="tag tag-rose" role="listitem">Agent SDK</span>
           <span class="tag tag-amber" role="listitem">Lessons Learned</span>
         </div>
 
@@ -588,19 +610,13 @@
 
           <p>I spent a few days trying to fix it with better prompts. Clearer instructions. More explicit rules. It helped a little. It didn't solve it.</p>
 
-          <p class="pullquote">You can't prompt your way out of a missing ground truth.</p>
+          <p class="pullquote">No prompt is good enough when the agent has no idea what's actually on the page.</p>
 
-          <h2>Observe, Don't Speculate</h2>
+          <h2>It Started with My Own Code</h2>
 
-          <p>So I changed two things, both grounded in the same idea: <strong>observe, don't speculate.</strong></p>
+          <p>Before I touched the AgenticQA pipeline output, I needed to clean up the pipeline itself. The codebase was getting messy - duplicated logic, agents doing too many things, the usual entropy that builds up when you're moving fast.</p>
 
-          <p><strong>First</strong>, I stopped letting the agents guess. Before any test gets generated, one agent opens the actual page in a real browser and records what's there. If a button, a form, or a modal wasn't found on the page, it doesn't get tested. Simple as that.</p>
-
-          <p><strong>Second</strong>, I added skills - plain text files that every agent reads before doing anything. Think of them as "how we do things here" docs, except the AI actually reads them every single time.</p>
-
-          <h2>Skills as Shared Standards</h2>
-
-          <p>I created two: a <code>qa-best-practices</code> skill that enforces our QA standards (no duplicates, every test tied to something real on the page), and a <code>code-review</code> skill that checks for the principles I actually care about:</p>
+          <p>So I created a <code>code-review</code> skill in Claude Code - a plain text file that encodes the engineering principles I actually care about:</p>
 
           <ul class="principles">
             <li><a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself" target="_blank" rel="noopener noreferrer">DRY</a></li>
@@ -610,11 +626,45 @@
             <li><a href="https://en.wikipedia.org/wiki/Robert_C._Martin" target="_blank" rel="noopener noreferrer">Clean Code</a></li>
           </ul>
 
-          <p>Encoding "how we do things here" in a plain text file and letting every agent load it. That might be the simplest and most underrated thing you can do in an agentic system.</p>
+          <p>Every time Claude reviews my code, it loads that skill and checks against those principles. It's just a markdown file in <code>.claude/skills/code-review/SKILL.md</code>, but it changed how Claude works with my codebase. Consistent standards, every time, without me having to repeat myself.</p>
+
+          <p>And that's when the idea hit me.</p>
+
+          <h2>What If My Agents Had Skills Too?</h2>
+
+          <p>My pipeline is built on the Claude Agent SDK. Each step - reading the ticket, exploring the page, generating criteria, writing tests - is its own agent. And those agents were the ones producing all the noisy, hallucinated output.</p>
+
+          <p>If a skill file could make Claude Code follow my coding standards, could the same thing work for my pipeline agents? Could I write a <code>qa-best-practices</code> skill that encodes our QA rules - observe don't speculate, no duplicates, every test tied to real evidence - and have each agent follow it?</p>
+
+          <h2>The SDK Actually Supports This</h2>
+
+          <p>Turns out, the Claude Agent SDK has first-class support for skills. You put a <code>SKILL.md</code> file in <code>.claude/skills/</code>, configure two options, and the model discovers and loads the skill automatically:</p>
+
+          <div class="code-block"><code><span class="c-key">for await</span> (<span class="c-key">const</span> message <span class="c-key">of</span> query({
+  prompt: <span class="c-str">"Run QA pipeline for ticket QA-57"</span>,
+  options: {
+    settingSources: [<span class="c-str">"project"</span>],  <span class="c-com">// discover skills from .claude/skills/</span>
+    allowedTools: [<span class="c-str">"Skill"</span>, <span class="c-str">"Read"</span>, <span class="c-str">"Bash"</span>]  <span class="c-com">// enable the Skill tool</span>
+  }
+}))</code></div>
+
+          <p>Skills are on-demand: the model reads the description, decides when the skill is relevant, and loads it. Clean, elegant, and built right into the SDK.</p>
+
+          <p>But I didn't use it.</p>
+
+          <h2>Why I Chose Not To</h2>
+
+          <p>Here's the thing about on-demand loading: the model decides when to use the skill. That's great for optional capabilities - "use the PDF skill when someone uploads a PDF." But my QA standards aren't optional. They need to apply to every single run, unconditionally.</p>
+
+          <p>I also considered using a project-level rules file (<code>CLAUDE.md</code>), which gets loaded automatically for every agent. But my pipeline has eight agents, and only three of them generate criteria and tests. The executor and bug reporter don't need criteria-writing rules cluttering their context.</p>
+
+          <p>So I went with the simplest thing that actually fit: I load the <code>SKILL.md</code> file at startup and append its content to the system prompt of the three agents that need it. Per-agent targeting. Unconditional application. No hoping the model decides to load it.</p>
+
+          <p class="pullquote">"First-class" doesn't always mean "right for your case." Understand the mechanism before adopting it.</p>
 
           <h2>Before and After</h2>
 
-          <p>Here's what the output looks like before and after:</p>
+          <p>Same ticket. Same page. Same pipeline. Here's the output before and after adding the QA skill:</p>
 
           <div class="comparison">
             <div class="comp-panel before">
@@ -644,8 +694,14 @@
 
           <p class="kicker">Fewer tests. But when they fail now, something actually broke.</p>
 
+          <h2>The Real Lesson</h2>
+
+          <p>I only landed on the right design because I stopped and asked Claude: <em>"is this the best way to load a skill in the Agent SDK?"</em> That one question surfaced three mechanisms - skills, rule files, system prompt injection - and the conversation that followed is what made the choice deliberate instead of accidental.</p>
+
+          <p>Using Claude to <strong>interrogate</strong> your own code and design decisions - not just generate them - is underrated. The shift from "write me this" to "why would I do this" is where the real leverage is.</p>
+
           <div class="post-hashtags">
-            #agenticQA &nbsp;#llmtesting &nbsp;#claudeskills &nbsp;#buildinpublic &nbsp;#qaautomation &nbsp;#ai
+            #agenticQA &nbsp;#llmtesting &nbsp;#claudeagentsdk &nbsp;#buildinpublic &nbsp;#qaautomation &nbsp;#ai
           </div>
         </div>
 
